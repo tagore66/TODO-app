@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Todo App - Secure Login</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container" id="auth-container">
+    <h1 id="auth-title">Welcome</h1>
+    
+    <div id="login-form">
+      <div class="input-group">
+        <label>Email Address</label>
+        <input type="email" id="login-email" placeholder="name@example.com">
+      </div>
+      <div class="input-group">
+        <label>Password</label>
+        <input type="password" id="login-password" placeholder="••••••••">
+      </div>
+      <button id="login-btn">Sign In</button>
+      <button class="google-btn" id="google-login-btn">
+        <img src="https://www.gstatic.com/images/branding/product/1x/googleg_48dp.png" width="18" height="18" alt="G">
+        Continue with Google
+      </button>
+      <a href="#" class="toggle-auth" id="show-signup">Don't have an account? <span>Sign Up</span></a>
+    </div>
+
+    <div id="signup-form" class="hidden">
+      <div class="input-group">
+        <label>Full Name</label>
+        <input type="text" id="signup-name" placeholder="John Doe">
+      </div>
+      <div class="input-group">
+        <label>Email Address</label>
+        <input type="email" id="signup-email" placeholder="name@example.com">
+      </div>
+      <div class="input-group">
+        <label>Password</label>
+        <input type="password" id="signup-password" placeholder="••••••••">
+      </div>
+      <button id="signup-btn">Create Account</button>
+      <a href="#" class="toggle-auth" id="show-login">Already have an account? <span>Login</span></a>
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
+</body>
+</html>

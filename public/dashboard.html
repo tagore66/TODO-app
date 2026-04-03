@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Tasks - Todo App</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container todo-container">
+    <div class="todo-header">
+      <h1>My Tasks</h1>
+      <div class="user-info">
+        <span id="user-name">Loading...</span>
+        <button id="logout-btn" class="secondary-btn" style="padding: 0.5rem 1rem; width: auto; margin-top: 0; margin-left: 1rem;">Logout</button>
+      </div>
+    </div>
+
+    <div class="todo-input-row">
+      <input type="text" id="todo-input" placeholder="What needs to be done?">
+      <input type="date" id="todo-deadline" title="Set Deadline">
+      <button id="add-todo-btn" style="width: auto; padding: 0.75rem 1.5rem;">Add</button>
+    </div>
+
+    <ul class="todo-list" id="todo-list">
+      <!-- Todos will be injected here -->
+    </ul>
+  </div>
+
+  <!-- Custom Confirmation Modal -->
+  <div id="confirm-modal" class="modal">
+    <div class="modal-content">
+      <h3>Delete Task?</h3>
+      <p>Are you sure you want to remove this task? This action cannot be undone.</p>
+      <div class="modal-actions">
+        <button id="cancel-delete" class="secondary-btn">Cancel</button>
+        <button id="confirm-delete" class="danger-btn">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/todo.js"></script>
+</body>
+</html>
