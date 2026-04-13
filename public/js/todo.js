@@ -19,6 +19,38 @@ if (!localStorage.getItem('token')) {
 const user = JSON.parse(localStorage.getItem('user') || '{}');
 document.getElementById('user-name').textContent = user.name || 'User';
 
+// Check subscription status
+async function checkSubscription() {
+  try {
+    const res = await fetch(`${BASE_URL}/auth/me`, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+    });
+    const userData = await res.json();
+    if (userData.subscription && userData.subscription.isSubscribed) {
+      const now = new Date();
+      if (new Date(userData.subscription.expiryDate) > now) {
+        document.getElementById('premium-badge').classList.remove('hidden');
+      }
+    }
+  } catch (err) {
+    console.error('Error checking subscription:', err);
+  }
+}
+checkSubscription();
+
+// Modal Management
+const subModal = document.getElementById('subscription-modal');
+const closeSubBtn = document.getElementById('close-sub-modal');
+
+closeSubBtn.onclick = () => subModal.classList.remove('active');
+window.onclick = (event) => {
+  if (event.target == subModal) subModal.classList.remove('active');
+};
+
+function openSubModal() {
+  subModal.classList.add('active');
+}
+
 // Logout
 document.getElementById('logout-btn').addEventListener('click', () => {
   localStorage.removeItem('token');
@@ -110,6 +142,9 @@ async function addTodo() {
       input.value = '';
       deadlineInput.value = '';
       fetchTodos();
+    } else if (res.status === 403) {
+      // Limit reached
+      openSubModal();
     }
   } catch (err) {
     console.error('Error adding todo:', err);
@@ -172,6 +207,70 @@ function logout() {
   localStorage.removeItem('token');
   localStorage.removeItem('user');
   window.location.href = '/';
+}
+
+// Razorpay Payment Handling
+document.querySelectorAll('.select-plan-btn').forEach(btn => {
+  btn.onclick = () => {
+    const plan = btn.parentElement.getAttribute('data-plan');
+    processSubscription(plan);
+  };
+});
+
+async function processSubscription(plan) {
+  try {
+    const res = await fetch(`${BASE_URL}/auth/create-order`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      },
+      body: JSON.stringify({ plan })
+    });
+    
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Order creation failed');
+
+    const options = {
+      key: data.key_id,
+      amount: data.order.amount,
+      currency: "INR",
+      name: "Todo App Pro",
+      description: `${plan.charAt(0).toUpperCase() + plan.slice(1)} Subscription`,
+      order_id: data.order.id,
+      handler: async function (response) {
+        // Verify payment
+        const verifyRes = await fetch(`${BASE_URL}/auth/verify-payment`, {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          },
+          body: JSON.stringify({
+            plan,
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature
+          })
+        });
+
+        const verifyData = await verifyRes.json();
+        if (verifyData.success) {
+          alert('Welcome to PRO! Your subscription is active.');
+          location.reload();
+        } else {
+          alert('Payment verification failed.');
+        }
+      },
+      theme: { color: "#6366f1" }
+    };
+
+    const rzp = new Razorpay(options);
+    rzp.open();
+  } catch (err) {
+    console.error('Payment Error:', err);
+    alert(err.message || 'Payment failed to initialize');
+  }
 }
 
 fetchTodos();

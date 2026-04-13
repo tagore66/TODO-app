@@ -13,9 +13,25 @@ router.get('/', authMiddleware, async (req, res) => {
   }
 });
 
+const User = require('../models/User');
+
 // Create a todo
 router.post('/', authMiddleware, async (req, res) => {
   try {
+    const user = await User.findById(req.user.id);
+    const taskCount = await Todo.countDocuments({ userId: req.user.id });
+
+    // Enforce 4-task limit for free users
+    const now = new Date();
+    const isSubscribed = user.subscription && user.subscription.isSubscribed && new Date(user.subscription.expiryDate) > now;
+
+    if (taskCount >= 4 && !isSubscribed) {
+      return res.status(403).json({ 
+        message: 'Free limit reached (4 tasks). Please subscribe to add more!',
+        limitReached: true 
+      });
+    }
+
     const newTodo = new Todo({
       task: req.body.task,
       deadline: req.body.deadline,

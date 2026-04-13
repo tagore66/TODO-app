@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
 <body>
   <div class="container todo-container">
@@ -17,6 +18,7 @@
         <p class="subtitle">Stay organized and productive</p>
       </div>
       <div class="user-pill">
+        <div id="premium-badge" class="premium-badge hidden">PRO</div>
         <span id="user-name">User</span>
         <button id="logout-btn" class="logout-pill">Logout</button>
       </div>
@@ -34,6 +36,35 @@
     <ul class="todo-list" id="todo-list">
       <!-- Todos will be injected here -->
     </ul>
+  </div>
+
+  <!-- Subscription Modal -->
+  <div id="subscription-modal" class="modal">
+    <div class="modal-content premium-modal">
+      <div class="modal-close" id="close-sub-modal">&times;</div>
+      <h3>✨ Go Premium</h3>
+      <p class="modal-desc">Unlimited tasks, priority support & more.</p>
+      
+      <div class="plans-grid">
+        <div class="plan-card" data-plan="weekly">
+          <span class="plan-name">Weekly</span>
+          <span class="plan-price">₹49</span>
+          <button class="select-plan-btn">Choose Weekly</button>
+        </div>
+        <div class="plan-card featured" data-plan="monthly">
+          <div class="best-value">POPULAR</div>
+          <span class="plan-name">Monthly</span>
+          <span class="plan-price">₹149</span>
+          <button class="select-plan-btn">Choose Monthly</button>
+        </div>
+        <div class="plan-card" data-plan="yearly">
+          <span class="plan-name">Yearly</span>
+          <span class="plan-price">₹999</span>
+          <button class="select-plan-btn">Choose Yearly</button>
+        </div>
+      </div>
+      <p class="modal-footer">Safe & Secure Payment by Razorpay</p>
+    </div>
   </div>
 
   <!-- Custom Confirmation Modal -->
