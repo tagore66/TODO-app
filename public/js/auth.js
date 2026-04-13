@@ -6,6 +6,7 @@ document.getElementById('show-signup')?.addEventListener('click', (e) => {
   document.getElementById('login-form').classList.add('hidden');
   document.getElementById('signup-form').classList.remove('hidden');
   document.getElementById('auth-title').textContent = 'Create Account';
+  document.getElementById('auth-subtitle').textContent = 'Join us to stay productive';
 });
 
 document.getElementById('show-login')?.addEventListener('click', (e) => {
@@ -13,6 +14,7 @@ document.getElementById('show-login')?.addEventListener('click', (e) => {
   document.getElementById('signup-form').classList.add('hidden');
   document.getElementById('login-form').classList.remove('hidden');
   document.getElementById('auth-title').textContent = 'Welcome Back';
+  document.getElementById('auth-subtitle').textContent = 'Sign in to manage your tasks';
 });
 
 // Local Login
@@ -64,8 +66,12 @@ document.getElementById('signup-btn')?.addEventListener('click', async () => {
   }
 });
 
-// Google Login
+// Google Auth
 document.getElementById('google-login-btn')?.addEventListener('click', () => {
+  window.location.href = '/auth/google';
+});
+
+document.getElementById('google-signup-btn')?.addEventListener('click', () => {
   window.location.href = '/auth/google';
 });
 
