@@ -6,6 +6,7 @@ const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const jwt = require('jsonwebtoken');
 const path = require('path');
+const https = require('https');
 const User = require('./models/User');
 const authRoutes = require('./routes/auth');
 const todoRoutes = require('./routes/todos');
@@ -62,6 +63,23 @@ app.get('/auth/google/callback',
     // Redirect to dashboard with token
     res.redirect(`/dashboard.html?token=${token}`);
   });
+
+// Health check route
+app.get('/ping', (req, res) => {
+  res.status(200).send('pong');
+});
+
+// Keep-Alive Logic: Self-pinging every 14 minutes to prevent Render from spinning down
+const RENDER_URL = process.env.RENDER_EXTERNAL_URL;
+if (RENDER_URL) {
+  setInterval(() => {
+    https.get(`${RENDER_URL}/ping`, (res) => {
+      console.log(`Keep-alive ping status: ${res.statusCode}`);
+    }).on('error', (err) => {
+      console.error('Keep-alive ping error:', err.message);
+    });
+  }, 14 * 60 * 1000); // 14 minutes
+}
 
 // Serve frontend - Catch-all for SPA
 app.use((req, res) => {
