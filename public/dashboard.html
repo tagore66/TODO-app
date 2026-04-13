@@ -12,17 +12,23 @@
 <body>
   <div class="container todo-container">
     <div class="todo-header">
-      <h1>My Tasks</h1>
-      <div class="user-info">
-        <span id="user-name">Loading...</span>
-        <button id="logout-btn" class="secondary-btn" style="padding: 0.5rem 1rem; width: auto; margin-top: 0; margin-left: 1rem;">Logout</button>
+      <div class="header-left">
+        <h1>My Tasks</h1>
+        <p class="subtitle">Stay organized and productive</p>
+      </div>
+      <div class="user-pill">
+        <span id="user-name">User</span>
+        <button id="logout-btn" class="logout-pill">Logout</button>
       </div>
     </div>
 
-    <div class="todo-input-row">
-      <input type="text" id="todo-input" placeholder="What needs to be done?">
-      <input type="date" id="todo-deadline" title="Set Deadline">
-      <button id="add-todo-btn" style="width: auto; padding: 0.75rem 1.5rem;">Add</button>
+    <div class="todo-input-container">
+      <div class="todo-input-row">
+        <input type="text" id="todo-input" placeholder="What needs to be done?">
+        <div class="input-divider"></div>
+        <input type="date" id="todo-deadline" title="Set Deadline">
+        <button id="add-todo-btn">Add Task</button>
+      </div>
     </div>
 
     <ul class="todo-list" id="todo-list">

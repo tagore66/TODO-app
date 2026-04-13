@@ -8,7 +8,8 @@
   --accent: #22d3ee;
   --danger: #ef4444;
   --success: #10b981;
-  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
 }
 
 * {
@@ -16,28 +17,30 @@
   padding: 0;
   box-sizing: border-box;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
 body {
-  background: radial-gradient(circle at top left, #1e293b, #0f172a);
+  background: radial-gradient(circle at 0% 0%, #1e293b 0%, #0f172a 100%);
   color: var(--text);
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow-x: hidden;
+  padding: 2rem;
 }
 
 .container {
   width: 100%;
   max-width: 450px;
-  padding: 2rem;
+  padding: 2.5rem;
   background: var(--card-bg);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--glass-border);
-  border-radius: 24px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-  animation: fadeIn 0.6s ease-out;
+  border-radius: 32px;
+  box-shadow: var(--shadow);
+  animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes fadeIn {
@@ -48,12 +51,28 @@ body {
 h1 {
   font-size: 2.5rem;
   font-weight: 800;
-  text-align: center;
-  margin-bottom: 2rem;
-  background: linear-gradient(to right, var(--primary), var(--accent));
+  background: linear-gradient(135deg, #fff 0%, var(--text-muted) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+  margin-bottom: 0.25rem;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin-bottom: 0;
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+#auth-title {
+  text-align: center;
+  margin-bottom: 0.5rem;
 }
 
 .input-group {
@@ -142,27 +161,106 @@ button:hover {
   cursor: pointer;
 }
 
-/* Todo List Styles */
+/* Todo List Styles Redesign */
 .todo-container {
-  max-width: 600px;
+  max-width: 800px;
 }
 
 .todo-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
+  align-items: flex-start;
+  margin-bottom: 3rem;
 }
 
-.user-info {
+.user-pill {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.5rem 0.5rem 0.5rem 1.25rem;
+  border-radius: 100px;
+  border: 1px solid var(--glass-border);
+}
+
+#user-name {
+  color: var(--text);
+  font-weight: 600;
   font-size: 0.875rem;
-  color: var(--text-muted);
+}
+
+.logout-pill {
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+  padding: 0.4rem 1rem;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  width: auto;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.logout-pill:hover {
+  background: var(--danger);
+  color: white;
+  transform: translateY(0);
+}
+
+.todo-input-container {
+  background: rgba(15, 23, 42, 0.6);
+  padding: 0.5rem;
+  border-radius: 20px;
+  border: 1px solid var(--glass-border);
+  margin-bottom: 3rem;
+  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.2);
 }
 
 .todo-input-row {
   display: flex;
-  gap: 0.75rem;
-  margin-bottom: 2rem;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.todo-input-row input[type="text"] {
+  background: transparent;
+  border: none;
+  font-size: 1.1rem;
+  padding: 1rem 1.5rem;
+  flex: 1;
+}
+
+.todo-input-row input[type="text"]:focus {
+  box-shadow: none;
+}
+
+.input-divider {
+  width: 1px;
+  height: 24px;
+  background: var(--glass-border);
+}
+
+#todo-deadline {
+  background: transparent;
+  border: none;
+  padding: 1rem;
+  width: auto;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+#add-todo-btn {
+  width: auto;
+  padding: 0.8rem 1.5rem;
+  background: linear-gradient(135deg, var(--primary) 0%, #818cf8 100%);
+  border-radius: 14px;
+  white-space: nowrap;
+}
+
+#add-todo-btn:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.5);
 }
 
 .todo-list {
