@@ -382,11 +382,35 @@ button:hover {
   border-color: rgba(239, 68, 68, 0.2);
 }
 
+.todo-item.overdue {
+  border-color: rgba(239, 68, 68, 0.4);
+  background: rgba(239, 68, 68, 0.05);
+  opacity: 0.85;
+}
+
+.overdue-badge {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  margin-left: 0.75rem;
+  animation: pulse-red 2s infinite;
+  letter-spacing: 0.05em;
+}
+
+@keyframes pulse-red {
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
 .todo-item span {
   flex: 1;
   display: flex;
   align-items: center;
-  justify-content: space-between;
 }
 
 .checkbox {

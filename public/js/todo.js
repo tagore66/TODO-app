@@ -99,17 +99,42 @@ async function fetchTodos() {
 function renderTodos(todos) {
   const list = document.getElementById('todo-list');
   list.innerHTML = '';
-  todos.forEach(todo => {
+  
+  // Sort todos: Active (not overdue) > Overdue > Completed
+  const sortedTodos = [...todos].sort((a, b) => {
+    const now = new Date().setHours(0,0,0,0);
+    const aDeadline = a.deadline ? new Date(a.deadline).getTime() : Infinity;
+    const bDeadline = b.deadline ? new Date(b.deadline).getTime() : Infinity;
+    
+    const aOverdue = !a.completed && aDeadline < now;
+    const bOverdue = !b.completed && bDeadline < now;
+
+    if (a.completed !== b.completed) return a.completed ? 1 : -1;
+    if (aOverdue !== bOverdue) return aOverdue ? 1 : -1;
+    return new Date(b.createdAt) - new Date(a.createdAt);
+  });
+
+  let overdueCount = 0;
+
+  sortedTodos.forEach(todo => {
+    const now = new Date().setHours(0,0,0,0);
+    const deadlineDate = todo.deadline ? new Date(todo.deadline).getTime() : null;
+    const isOverdue = !todo.completed && deadlineDate && deadlineDate < now;
+    
+    if (isOverdue) overdueCount++;
+
     const li = document.createElement('li');
-    li.className = `todo-item ${todo.completed ? 'completed' : ''}`;
+    li.className = `todo-item ${todo.completed ? 'completed' : ''} ${isOverdue ? 'overdue' : ''}`;
     
     let deadlineHtml = '';
     if (todo.deadline) {
       const date = new Date(todo.deadline);
-      const isOverdue = !todo.completed && date < new Date().setHours(0,0,0,0);
       deadlineHtml = `<span class="deadline-badge ${isOverdue ? 'deadline-overdue' : ''}">
         ${date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
       </span>`;
+      if (isOverdue) {
+        deadlineHtml += `<span class="overdue-badge">OVERDUE</span>`;
+      }
     }
 
     const checkbox = document.createElement('div');
