@@ -28,15 +28,31 @@ async function checkSubscription() {
     const userData = await res.json();
     if (userData.subscription && userData.subscription.isSubscribed) {
       const now = new Date();
-      if (new Date(userData.subscription.expiryDate) > now) {
+      const expiry = new Date(userData.subscription.expiryDate);
+      
+      if (expiry > now) {
         document.getElementById('premium-badge').classList.remove('hidden');
+        document.getElementById('header-premium-btn').classList.add('hidden');
+        document.getElementById('subscription-status').classList.remove('hidden');
+        document.getElementById('task-limit-info').textContent = 'Unlimited tasks unlocked ✨';
+        
+        document.getElementById('active-plan').textContent = userData.subscription.plan;
+        
+        const diffTime = Math.abs(expiry - now);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+        document.getElementById('expiry-date').textContent = `Expires in ${diffDays} days`;
+        return true; // Is active PRO
       }
     }
+    return false; // Is Free basic
   } catch (err) {
     console.error('Error checking subscription:', err);
+    return false;
   }
 }
 checkSubscription();
+
+document.getElementById('header-premium-btn').onclick = openSubModal;
 
 // Modal Management
 const subModal = document.getElementById('subscription-modal');
@@ -66,7 +82,14 @@ async function fetchTodos() {
     });
     if (res.status === 401) return logout();
     const todos = await res.json();
-    console.log('Fetched Todos:', todos);
+    
+    // Update limit counter
+    const isPro = await checkSubscription();
+    if (!isPro) {
+      const remaining = Math.max(0, 4 - todos.length);
+      document.getElementById('task-limit-info').textContent = `${remaining} complimentary tasks remaining`;
+    }
+
     renderTodos(todos);
   } catch (err) {
     console.error('Error fetching todos:', err);
@@ -127,7 +150,12 @@ async function addTodo() {
   const deadlineInput = document.getElementById('todo-deadline');
   const task = input.value.trim();
   const deadline = deadlineInput.value;
+  
   if (!task) return;
+  if (!deadline) {
+    alert('⚠️ Please mention a deadline for your task!');
+    return;
+  }
 
   try {
     const res = await fetch(`${BASE_URL}/todos`, {

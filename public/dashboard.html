@@ -15,12 +15,21 @@
     <div class="todo-header">
       <div class="header-left">
         <h1>My Tasks</h1>
-        <p class="subtitle">Stay organized and productive</p>
+        <p class="subtitle" id="task-limit-info">4 complimentary tasks remaining</p>
       </div>
-      <div class="user-pill">
-        <div id="premium-badge" class="premium-badge hidden">PRO</div>
-        <span id="user-name">User</span>
-        <button id="logout-btn" class="logout-pill">Logout</button>
+
+      <div class="header-right">
+        <div id="subscription-status" class="plan-info hidden">
+          <span class="plan-label">Plan:</span>
+          <span id="active-plan" class="plan-value">-</span>
+          <span class="plan-expiry" id="expiry-date">Expires in 0 days</span>
+        </div>
+        <button id="header-premium-btn" class="premium-btn">Go Premium ✨</button>
+        <div class="user-pill">
+          <div id="premium-badge" class="premium-badge hidden">PRO</div>
+          <span id="user-name">User</span>
+          <button id="logout-btn" class="logout-pill">Logout</button>
+        </div>
       </div>
     </div>
 

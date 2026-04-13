@@ -183,6 +183,60 @@ button:hover {
   border: 1px solid var(--glass-border);
 }
 
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.premium-btn {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  color: #1e1b4b;
+  padding: 0.6rem 1.25rem;
+  border-radius: 100px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  width: auto;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.2);
+}
+
+.premium-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+}
+
+.plan-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.2rem;
+  padding-right: 1.5rem;
+  border-right: 1px solid var(--glass-border);
+}
+
+.plan-label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+}
+
+.plan-value {
+  color: #fbbf24;
+  font-weight: 800;
+  font-size: 0.9rem;
+  text-transform: capitalize;
+}
+
+.plan-expiry {
+  font-size: 0.75rem;
+  color: #10b981;
+}
+
 .premium-badge {
   background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
   color: white;
