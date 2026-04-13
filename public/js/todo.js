@@ -26,6 +26,12 @@ async function checkSubscription() {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
     });
     const userData = await res.json();
+    
+    // Update name from server
+    if (userData.name) {
+      document.getElementById('user-name').textContent = userData.name;
+    }
+
     if (userData.subscription && userData.subscription.isSubscribed) {
       const now = new Date();
       const expiry = new Date(userData.subscription.expiryDate);
