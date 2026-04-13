@@ -114,6 +114,7 @@ function renderTodos(todos) {
 
     const checkbox = document.createElement('div');
     checkbox.className = `checkbox ${todo.completed ? 'checked' : ''}`;
+    checkbox.title = todo.completed ? 'Mark as undone?' : 'Mark as done?';
     checkbox.onclick = () => window.toggleTodo(todo._id, todo.completed);
 
     const span = document.createElement('span');
