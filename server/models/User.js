@@ -26,6 +26,14 @@ const UserSchema = new mongoose.Schema({
     plan: { type: String, enum: ['none', 'weekly', 'monthly', 'yearly'], default: 'none' },
     expiryDate: { type: Date }
   },
+  mfaSecret: {
+  type: String,
+  default: null,
+},
+mfaEnabled: {
+  type: Boolean,
+  default: false,
+},
   createdAt: {
     type: Date,
     default: Date.now

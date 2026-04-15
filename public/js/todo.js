@@ -32,6 +32,8 @@ async function checkSubscription() {
       document.getElementById('user-name').textContent = userData.name;
     }
 
+    // MFA is mandatory now, no need to check status here
+
     if (userData.subscription && userData.subscription.isSubscribed) {
       const now = new Date();
       const expiry = new Date(userData.subscription.expiryDate);
@@ -58,7 +60,11 @@ async function checkSubscription() {
 }
 checkSubscription();
 
-document.getElementById('header-premium-btn').onclick = openSubModal;
+
+const premiumBtn = document.getElementById('header-premium-btn');
+if (premiumBtn) {
+  premiumBtn.onclick = openSubModal;
+}
 
 // Modal Management
 const subModal = document.getElementById('subscription-modal');
@@ -74,11 +80,14 @@ function openSubModal() {
 }
 
 // Logout
-document.getElementById('logout-btn').addEventListener('click', () => {
-  localStorage.removeItem('token');
-  localStorage.removeItem('user');
-  window.location.href = '/';
-});
+const logoutBtn = document.getElementById('logout-btn');
+if (logoutBtn) {
+  logoutBtn.addEventListener('click', () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    window.location.href = '/';
+  });
+}
 
 // Fetch Todos
 async function fetchTodos() {

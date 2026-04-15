@@ -5,6 +5,8 @@ const User = require('../models/User');
 const authMiddleware = require('../middleware/auth');
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
+const speakeasy = require('speakeasy');
+const qrcode = require('qrcode');
 
 // Razorpay instance
 const razorpay = new Razorpay({
@@ -23,6 +25,20 @@ const PLANS = {
 router.post('/signup', async (req, res) => {
   const { name, email, password } = req.body;
   try {
+    // Basic validation
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: 'Please fill in all fields' });
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: 'Please enter a valid email address' });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({ message: 'Password must be at least 6 characters long' });
+    }
+
     let user = await User.findOne({ email });
     if (user) {
       return res.status(400).json({ message: 'User already exists' });
@@ -30,9 +46,8 @@ router.post('/signup', async (req, res) => {
     user = new User({ name, email, password });
     await user.save();
 
-    const payload = { id: user.id };
-    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' });
-    res.json({ token, user: { id: user.id, name: user.name, email: user.email } });
+    const tempToken = jwt.sign({ id: user.id, mfaSetupPending: true }, process.env.JWT_SECRET, { expiresIn: '5m' });
+    res.json({ forceMfaSetup: true, tempToken });
   } catch (err) {
     console.error(err);
     res.status(500).send('Server error');
@@ -52,9 +67,15 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    const payload = { id: user.id };
-    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' });
-    res.json({ token, user: { id: user.id, name: user.name, email: user.email } });
+    if (!user.mfaEnabled) {
+      // MFA setup is mandatory
+      const tempToken = jwt.sign({ id: user.id, mfaSetupPending: true }, process.env.JWT_SECRET, { expiresIn: '5m' });
+      return res.json({ forceMfaSetup: true, tempToken });
+    }
+
+    // MFA is enabled — require OTP
+    const tempToken = jwt.sign({ id: user.id, mfaPending: true }, process.env.JWT_SECRET, { expiresIn: '5m' });
+    return res.json({ mfaRequired: true, tempToken });
   } catch (err) {
     console.error(err);
     res.status(500).send('Server error');
@@ -125,6 +146,102 @@ router.post('/verify-payment', authMiddleware, async (req, res) => {
     }
   } else {
     res.status(400).json({ message: 'Invalid payment signature' });
+  }
+});
+
+// MFA Setup - Generate Secret & QR Code
+router.post('/mfa/setup', async (req, res) => {
+  const { tempToken } = req.body;
+  try {
+    const decoded = jwt.verify(tempToken, process.env.JWT_SECRET);
+    if (!decoded.mfaSetupPending) {
+      return res.status(400).json({ message: 'Invalid token' });
+    }
+
+    const user = await User.findById(decoded.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    const secret = speakeasy.generateSecret({
+      name: `TodoApp (${user.email})`,
+      issuer: 'TodoApp'
+    });
+
+    // Save secret to user but don't enable it yet
+    user.mfaSecret = secret.base32;
+    await user.save();
+
+    const qrCodeUrl = await qrcode.toDataURL(secret.otpauth_url);
+    res.json({ qrCodeUrl });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ message: 'MFA setup failed' });
+  }
+});
+
+// MFA Verify Setup - Enable MFA
+router.post('/mfa/verify-setup', async (req, res) => {
+  const { tempToken, token } = req.body;
+  try {
+    const decoded = jwt.verify(tempToken, process.env.JWT_SECRET);
+    if (!decoded.mfaSetupPending) {
+      return res.status(400).json({ message: 'Invalid token' });
+    }
+
+    const user = await User.findById(decoded.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    const verified = speakeasy.totp.verify({
+      secret: user.mfaSecret,
+      encoding: 'base32',
+      token,
+      window: 1
+    });
+
+    if (verified) {
+      user.mfaEnabled = true;
+      await user.save();
+      
+      const payload = { id: user.id };
+      const authToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' });
+      res.json({ token: authToken, user: { id: user.id, name: user.name, email: user.email } });
+    } else {
+      res.status(400).json({ message: 'Invalid OTP' });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ message: 'MFA verification failed' });
+  }
+});
+
+// MFA Verify - During Login
+router.post('/mfa/verify', async (req, res) => {
+  const { tempToken, token } = req.body;
+  try {
+    const decoded = jwt.verify(tempToken, process.env.JWT_SECRET);
+    if (!decoded.mfaPending) {
+      return res.status(400).json({ message: 'Invalid token' });
+    }
+
+    const user = await User.findById(decoded.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    const verified = speakeasy.totp.verify({
+      secret: user.mfaSecret,
+      encoding: 'base32',
+      token,
+      window: 1
+    });
+
+    if (verified) {
+      const payload = { id: user.id };
+      const authToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' });
+      res.json({ token: authToken, user: { id: user.id, name: user.name, email: user.email } });
+    } else {
+      res.status(400).json({ message: 'Invalid OTP' });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ message: 'MFA verification failed' });
   }
 });
 
