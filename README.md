@@ -1,131 +1,100 @@
-# ⏰✌️TODO App (Full Stack)
+# ⏰ TODO App (Full Stack)
 
-A simple and clean full-stack TODO application built to manage daily tasks efficiently.
-This project demonstrates backend integration, authentication, and real-time task handling.
-
----
-
-##  Live Demo:
-
-https://todo-app-dcf7.onrender.com
+A high-performance, full-stack TODO application built for security and efficiency. This project integrates modern authentication flows, secure payment gateways, and containerized deployment.
 
 ---
 
-##  Features
+## 🚀 Live Demo
+[https://todo-app-dcf7.onrender.com](https://todo-app-dcf7.onrender.com)
 
-* Add, edit, and delete tasks
-* Mark tasks as completed
-* Persistent storage using MongoDB
-* Google authentication (OAuth 2.0)
-* Clean and responsive UI
-* Secure session handling
+---
+
+## 🔥 Key Features
+
+### 🔐 Advanced Security
+*   **Mandatory MFA**: Every account is secured with TOTP-based Multi-Factor Authentication. Setup is required immediately upon registration or first login.
+*   **Signup Validation**: Robust client and server-side validation to ensure data integrity.
+*   **Google OAuth 2.0**: Seamless social login integration.
+*   **Secure Session Handling**: JWT-based authentication with temporary token states for MFA flows.
+
+### 💳 Premium Subscriptions
+*   **Razorpay Integration**: Native support for Weekly, Monthly, and Yearly subscription plans.
+*   **Unlocked Limits**: Pro users enjoy unlimited task creation and an ad-free interface.
+
+### ⚡ Performance & UX
+*   **Real-time Task Management**: Add, edit, delete, and toggle tasks instantly.
+*   **Deadline Tracking**: Visual badges for upcoming and overdue tasks.
+*   **Glassmorphism UI**: Modern, responsive design with smooth animations.
 
 ---
 
 ## 🛠️ Tech Stack
 
-**Frontend**
-
-* HTML
-* CSS
-* JavaScript
-
-**Backend**
-
-* Node.js
-* Express.js
-
-**Database**
-
-* MongoDB (Atlas)
-
-**Authentication**
-
-* Google OAuth 2.0
+| Layer | Technologies |
+| :--- | :--- |
+| **Frontend** | HTML5, CSS3 (Glassmorphism), JavaScript (Vanilla) |
+| **Backend** | Node.js, Express.js |
+| **Database** | MongoDB Atlas (Mongoose) |
+| **Auth/Security** | Passport.js, Speakeasy (TOTP), JWT, BcryptJS |
+| **Payments** | Razorpay SDK |
+| **DevOps** | Docker, Render |
 
 ---
 
-## ⚙️ Installation & Setup
+## ⚙️ Setup & Installation
 
-1. Clone the repository
+### Local Development
+1. **Clone & Install**
+   ```bash
+   git clone https://github.com/tagore66/TODO-app.git
+   cd TODO-app
+   npm install
+   ```
 
-```
-git clone https://github.com/your-username/TODO-app.git
-cd TODO-app
-```
+2. **Configure Environment**
+   Create a `.env` file in the root:
+   ```env
+   PORT=5000
+   MONGODB_URI=your_mongodb_uri
+   JWT_SECRET=your_jwt_secret
+   SESSION_SECRET=your_session_secret
+   GOOGLE_CLIENT_ID=your_id
+   GOOGLE_CLIENT_SECRET=your_secret
+   CALLBACK_URL=http://localhost:5000/auth/google/callback
+   RAZORPAY_KEY_ID=your_key_id
+   RAZORPAY_KEY_SECRET=your_secret
+   ```
 
-2. Install dependencies
+3. **Run**
+   ```bash
+   node server/server.js
+   ```
 
-```
-npm install
-```
-
-3. Create a `.env` file in the root directory and add:
-
-```
-PORT=5000
-MONGODB_URI=your_mongodb_uri
-JWT_SECRET=your_secret
-GOOGLE_CLIENT_ID=your_client_id
-GOOGLE_CLIENT_SECRET=your_secret
-SESSION_SECRET=your_session_secret
-CALLBACK_URL=http://localhost:5000/auth/google/callback
-CLIENT_URL=http://localhost:5000
-```
-
-4. Run the server
-
-```
-node server/server.js
-```
-
-5. Open in browser:
-
-```
-http://localhost:5000
+### Docker Deployment
+The app is fully containerized. To run using Docker:
+```bash
+docker build -t todo-app .
+docker run -p 5000:5000 --env-file .env todo-app
 ```
 
 ---
 
-## 📁(FOLDERS/files) Project Structure
-
+## 📁 Project Structure
 ```
 TODO-app/
 │
-├── public/        # Frontend files
-├── server/        # Backend logic
-├── .env           # Environment variables (not pushed)
-├── package.json
+├── public/          # Glassmorphism UI & Logic
+├── server/          # Express API & Auth Routes
+├── models/          # Mongoose Schemas (User, Todo)
+├── Dockerfile       # Container Configuration
+├── .env             # Externalized Secrets
 └── README.md
 ```
 
 ---
 
-##  Environment Variables
-
-Make sure you never expose your `.env` file publicly.
-Use environment variables for all sensitive data like API keys and database credentials.
-
----
-
-## Future Improvements
-
-* Add due dates & reminders
-* Task categories / tags
-* Dark mode
-* Mobile app version
-
----
-
 ## 🙌 Author
+**Tagore Bharadwaj**  
+B.Tech Student @ VIT-AP  
 
-**Tagore Bharadwaj**
-B.Tech Student @ VIT-AP
-
----
-
-##  Note
-
-This project was built as part of learning full-stack development and deployment, including real-world concepts like authentication, environment configuration, and cloud hosting.
-
----
+Built as a demonstration of production-grade full-stack features, including secure payment integration and mandatory multi-factor authentication.
