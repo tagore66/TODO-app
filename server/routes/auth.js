@@ -50,7 +50,7 @@ router.post('/signup', async (req, res) => {
     res.json({ forceMfaSetup: true, tempToken });
   } catch (err) {
     console.error(err);
-    res.status(500).send('Server error');
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
 
@@ -78,7 +78,7 @@ router.post('/login', async (req, res) => {
     return res.json({ mfaRequired: true, tempToken });
   } catch (err) {
     console.error(err);
-    res.status(500).send('Server error');
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
 
@@ -88,7 +88,7 @@ router.get('/me', authMiddleware, async (req, res) => {
     const user = await User.findById(req.user.id).select('-password');
     res.json(user);
   } catch (err) {
-    res.status(500).send('Server error');
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
 
