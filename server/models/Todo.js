@@ -25,11 +25,10 @@ const TodoSchema = new mongoose.Schema({
 });
 
 // Encrypt task before saving
-TodoSchema.pre('save', function(next) {
+TodoSchema.pre('save', async function() {
   if (this.isModified('task')) {
     this.task = encrypt(this.task);
   }
-  next();
 });
 
 // Decrypt task after initializing
