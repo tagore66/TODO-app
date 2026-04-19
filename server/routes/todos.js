@@ -38,6 +38,7 @@ router.post('/', authMiddleware, async (req, res) => {
       userId: req.user.id
     });
     const todo = await newTodo.save();
+    console.log(`[SECURITY AUDIT] New task created. Raw Data: "${req.body.task}" -> Encrypted in DB: "${todo.task}"`);
     res.json(todo);
   } catch (err) {
     res.status(500).send('Server error');
