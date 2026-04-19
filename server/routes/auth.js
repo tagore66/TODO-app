@@ -25,7 +25,6 @@ const PLANS = {
 router.post('/signup', async (req, res) => {
   const { name, email, password } = req.body;
   try {
-    // Basic validation
     if (!name || !email || !password) {
       return res.status(400).json({ message: 'Please fill in all fields' });
     }
@@ -49,8 +48,11 @@ router.post('/signup', async (req, res) => {
     const tempToken = jwt.sign({ id: user.id, mfaSetupPending: true }, process.env.JWT_SECRET, { expiresIn: '5m' });
     res.json({ forceMfaSetup: true, tempToken });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error('SIGNUP ERROR:', err);
+    res.status(500).json({ 
+      message: err.code === 11000 ? 'Email already registered' : 'Server error during signup',
+      details: err.message 
+    });
   }
 });
 

@@ -42,22 +42,16 @@ mfaEnabled: {
 });
 
 // Hash password before saving
-UserSchema.pre('save', async function(next) {
-  if (this.isModified('password')) {
-    try {
-      const salt = await bcrypt.genSalt(10);
-      this.password = await bcrypt.hash(this.password, salt);
-    } catch (err) {
-      return next(err);
-    }
+UserSchema.pre('save', async function() {
+  if (this.isModified('password') && this.password) {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
   }
 
   // Encrypt mfaSecret before saving
   if (this.isModified('mfaSecret') && this.mfaSecret) {
     this.mfaSecret = encrypt(this.mfaSecret);
   }
-  
-  next();
 });
 
 // Decrypt mfaSecret after initializing
