@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const { encrypt, decrypt } = require('../utils/encryption');
 
 const UserSchema = new mongoose.Schema({
   email: {
@@ -41,13 +42,28 @@ mfaEnabled: {
 });
 
 // Hash password before saving
-UserSchema.pre('save', async function() {
-  if (!this.isModified('password')) return;
-  try {
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-  } catch (err) {
-    throw err;
+UserSchema.pre('save', async function(next) {
+  if (this.isModified('password')) {
+    try {
+      const salt = await bcrypt.genSalt(10);
+      this.password = await bcrypt.hash(this.password, salt);
+    } catch (err) {
+      return next(err);
+    }
+  }
+
+  // Encrypt mfaSecret before saving
+  if (this.isModified('mfaSecret') && this.mfaSecret) {
+    this.mfaSecret = encrypt(this.mfaSecret);
+  }
+  
+  next();
+});
+
+// Decrypt mfaSecret after initializing
+UserSchema.post('init', function(doc) {
+  if (doc.mfaSecret) {
+    doc.mfaSecret = decrypt(doc.mfaSecret);
   }
 });
 

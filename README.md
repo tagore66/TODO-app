@@ -15,6 +15,7 @@ A high-performance, full-stack TODO application built for security and efficienc
 *   **Mandatory MFA**: Every account is secured with TOTP-based Multi-Factor Authentication. Setup is required immediately upon registration or first login.
 *   **Signup Validation**: Robust client and server-side validation to ensure data integrity.
 *   **Google OAuth 2.0**: Seamless social login integration.
+*   **ChaCha20 Encryption**: Sensitive data (tasks and MFA secrets) is encrypted at rest using the ChaCha20-Poly1305 algorithm for maximum privacy.
 *   **Secure Session Handling**: JWT-based authentication with temporary token states for MFA flows.
 
 ### 💳 Premium Subscriptions
@@ -35,7 +36,7 @@ A high-performance, full-stack TODO application built for security and efficienc
 | **Frontend** | HTML5, CSS3 (Glassmorphism), JavaScript (Vanilla) |
 | **Backend** | Node.js, Express.js |
 | **Database** | MongoDB Atlas (Mongoose) |
-| **Auth/Security** | Passport.js, Speakeasy (TOTP), JWT, BcryptJS |
+| **Auth/Security** | Passport.js, Speakeasy (TOTP), JWT, BcryptJS, ChaCha20-Poly1305 |
 | **Payments** | Razorpay SDK |
 | **DevOps** | Docker, Render |
 
@@ -63,6 +64,7 @@ A high-performance, full-stack TODO application built for security and efficienc
    CALLBACK_URL=http://localhost:5000/auth/google/callback
    RAZORPAY_KEY_ID=your_key_id
    RAZORPAY_KEY_SECRET=your_secret
+   ENCRYPTION_KEY=your_32_byte_hex_key
    ```
 
 3. **Run**
