@@ -1,6 +1,4 @@
-const BASE_URL = ''; // Relative path since we serve public from same origin
-
-// Switch between Login and Signup
+const BASE_URL = '';
 document.getElementById('show-signup')?.addEventListener('click', (e) => {
   e.preventDefault();
   document.getElementById('login-form').classList.add('hidden');
@@ -17,25 +15,25 @@ document.getElementById('show-login')?.addEventListener('click', (e) => {
   document.getElementById('auth-subtitle').textContent = 'Sign in to manage your tasks';
 });
 
-// Local Login
+
 let mfaTempToken = null;
 
 async function handleAuthResponse(data) {
   if (data.forceMfaSetup) {
-    // MFA setup is required - prepare UI immediately
+
     mfaTempToken = data.tempToken;
     document.getElementById('mfa-title').textContent = 'Secure Your Account';
     document.getElementById('mfa-subtitle').textContent = 'MFA is now mandatory. Scan this QR code to continue.';
     document.getElementById('verify-mfa-btn').textContent = 'Enable & Sign In';
     document.getElementById('mfa-setup-container').classList.remove('hidden');
-    
+
     document.getElementById('login-form').classList.add('hidden');
     document.getElementById('signup-form').classList.add('hidden');
     document.getElementById('mfa-form').classList.remove('hidden');
     document.getElementById('auth-container').querySelector('.auth-header').classList.add('hidden');
     document.getElementById('mfa-otp').focus();
 
-    // Fetch QR Code in background
+
     try {
       const setupRes = await fetch(`${BASE_URL}/auth/mfa/setup`, {
         method: 'POST',
@@ -43,7 +41,7 @@ async function handleAuthResponse(data) {
         body: JSON.stringify({ tempToken: mfaTempToken })
       });
       const setupData = await setupRes.json();
-      
+
       if (setupRes.ok) {
         document.getElementById('setup-qr-img').src = setupData.qrCodeUrl;
       } else {
@@ -53,7 +51,7 @@ async function handleAuthResponse(data) {
       console.error('MFA Setup Error:', err);
     }
   } else if (data.mfaRequired) {
-    // MFA is already enabled — show OTP step
+
     mfaTempToken = data.tempToken;
     document.getElementById('mfa-setup-container').classList.add('hidden');
     document.getElementById('mfa-title').textContent = 'Verify OTP';
@@ -93,13 +91,11 @@ document.getElementById('login-btn')?.addEventListener('click', async () => {
   }
 });
 
-// Signup
 document.getElementById('signup-btn')?.addEventListener('click', async () => {
   const name = document.getElementById('signup-name').value.trim();
   const email = document.getElementById('signup-email').value.trim();
   const password = document.getElementById('signup-password').value;
 
-  // Frontend Validation
   if (!name || !email || !password) {
     alert('Please fill in all fields');
     return;
@@ -133,18 +129,16 @@ document.getElementById('signup-btn')?.addEventListener('click', async () => {
   }
 });
 
-// MFA Verify during login
 document.getElementById('verify-mfa-btn')?.addEventListener('click', async () => {
   const otp = document.getElementById('mfa-otp').value.trim();
   if (!otp || otp.length !== 6) {
     alert('Please enter a valid 6-digit code');
     return;
   }
-  
-  // Decide whether to call verify or verify-setup based on UI state
+
   const isSetup = !document.getElementById('mfa-setup-container').classList.contains('hidden');
   const endpoint = isSetup ? '/auth/mfa/verify-setup' : '/auth/mfa/verify';
-  
+
   try {
     const res = await fetch(`${BASE_URL}${endpoint}`, {
       method: 'POST',
@@ -164,12 +158,10 @@ document.getElementById('verify-mfa-btn')?.addEventListener('click', async () =>
   }
 });
 
-// Allow Enter key on OTP input
 document.getElementById('mfa-otp')?.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') document.getElementById('verify-mfa-btn').click();
 });
 
-// Cancel MFA — go back to login
 document.getElementById('cancel-mfa')?.addEventListener('click', (e) => {
   e.preventDefault();
   mfaTempToken = null;
@@ -181,7 +173,6 @@ document.getElementById('cancel-mfa')?.addEventListener('click', (e) => {
   document.getElementById('mfa-otp').value = '';
 });
 
-// Google Auth
 document.getElementById('google-login-btn')?.addEventListener('click', () => {
   window.location.href = '/auth/google';
 });
@@ -190,7 +181,7 @@ document.getElementById('google-signup-btn')?.addEventListener('click', () => {
   window.location.href = '/auth/google';
 });
 
-// Check if already logged in
+
 if (localStorage.getItem('token') && window.location.pathname === '/' || window.location.pathname === '/index.html') {
-    window.location.href = '/dashboard.html';
+  window.location.href = '/dashboard.html';
 }

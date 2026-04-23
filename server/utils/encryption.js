@@ -1,7 +1,7 @@
 const crypto = require('crypto');
 
 const ALGORITHM = 'chacha20-poly1305';
-const IV_LENGTH = 12; // Standard for ChaCha20-Poly1305
+const IV_LENGTH = 12; 
 const AUTH_TAG_LENGTH = 16;
 const rawKey = (process.env.ENCRYPTION_KEY || '').trim();
 if (rawKey.length !== 64) {
@@ -9,11 +9,7 @@ if (rawKey.length !== 64) {
 }
 const KEY = (rawKey.length === 64) ? Buffer.from(rawKey, 'hex') : null;
 
-/**
- * Encrypts a string using ChaCha20-Poly1305
- * @param {string} text - The plain text to encrypt
- * @returns {string} - The encrypted string in format iv:authTag:ciphertext
- */
+
 function encrypt(text) {
   if (!text) return text;
   
@@ -36,21 +32,17 @@ function encrypt(text) {
     return `${iv.toString('hex')}:${authTag}:${encrypted}`;
   } catch (err) {
     console.error('Encryption failed:', err.message);
-    return text; // Fallback to plaintext to avoid crash
+    return text; 
   }
 }
 
-/**
- * Decrypts a string using ChaCha20-Poly1305
- * @param {string} encryptedText - The encrypted string in format iv:authTag:ciphertext
- * @returns {string} - The decrypted plain text
- */
+
 function decrypt(encryptedText) {
   if (!encryptedText) return encryptedText;
 
   const parts = encryptedText.split(':');
   if (parts.length !== 3) {
-    // Return original if not in expected encrypted format (handles pre-encryption data)
+
     return encryptedText;
   }
 
@@ -74,7 +66,7 @@ function decrypt(encryptedText) {
     return decrypted;
   } catch (err) {
     console.error('Decryption failed:', err.message);
-    // If decryption fails, return the original text (might be unencrypted)
+
     return encryptedText;
   }
 }

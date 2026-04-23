@@ -13,12 +13,12 @@ const todoRoutes = require('./routes/todos');
 
 const app = express();
 
-// Middleware
+
 app.use(express.json());
 app.use(cors());
 app.use(express.static(path.join(__dirname, '../public')));
 
-// Passport config
+
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -42,16 +42,16 @@ passport.use(new GoogleStrategy({
   }
 ));
 
-// Database connection
+
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.error('MongoDB connection error:', err));
 
-// Routes
+
 app.use('/auth', authRoutes);
 app.use('/todos', todoRoutes);
 
-// Google Auth Routes
+
 app.get('/auth/google',
   passport.authenticate('google', { scope: ['profile', 'email'] }));
 
@@ -60,16 +60,16 @@ app.get('/auth/google/callback',
   (req, res) => {
     const payload = { id: req.user.id };
     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' });
-    // Redirect to dashboard with token
+
     res.redirect(`/dashboard.html?token=${token}`);
   });
 
-// Health check route
+
 app.get('/ping', (req, res) => {
   res.status(200).send('pong');
 });
 
-// Keep-Alive Logic: Self-pinging every 14 minutes to prevent Render from spinning down
+
 const RENDER_URL = process.env.RENDER_EXTERNAL_URL;
 if (RENDER_URL) {
   setInterval(() => {
@@ -78,10 +78,10 @@ if (RENDER_URL) {
     }).on('error', (err) => {
       console.error('Keep-alive ping error:', err.message);
     });
-  }, 14 * 60 * 1000); // 14 minutes
+  }, 14 * 60 * 1000); 
 }
 
-// Serve frontend - Catch-all for SPA
+
 app.use((req, res) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });

@@ -8,20 +8,20 @@ const crypto = require('crypto');
 const speakeasy = require('speakeasy');
 const qrcode = require('qrcode');
 
-// Razorpay instance
+
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET
 });
 
-// Plan pricings in Paise (INR * 100)
+
 const PLANS = {
   weekly: 49 * 100,
   monthly: 149 * 100,
   yearly: 999 * 100
 };
 
-// Signup
+
 router.post('/signup', async (req, res) => {
   const { name, email, password } = req.body;
   try {
@@ -56,7 +56,7 @@ router.post('/signup', async (req, res) => {
   }
 });
 
-// Login
+
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -70,12 +70,12 @@ router.post('/login', async (req, res) => {
     }
 
     if (!user.mfaEnabled) {
-      // MFA setup is mandatory
+
       const tempToken = jwt.sign({ id: user.id, mfaSetupPending: true }, process.env.JWT_SECRET, { expiresIn: '5m' });
       return res.json({ forceMfaSetup: true, tempToken });
     }
 
-    // MFA is enabled — require OTP
+
     const tempToken = jwt.sign({ id: user.id, mfaPending: true }, process.env.JWT_SECRET, { expiresIn: '5m' });
     return res.json({ mfaRequired: true, tempToken });
   } catch (err) {
@@ -84,7 +84,7 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// Get current user status
+
 router.get('/me', authMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
@@ -94,7 +94,7 @@ router.get('/me', authMiddleware, async (req, res) => {
   }
 });
 
-// Create Razorpay Order
+
 router.post('/create-order', authMiddleware, async (req, res) => {
   const { plan } = req.body;
   const amount = PLANS[plan];
@@ -117,7 +117,7 @@ router.post('/create-order', authMiddleware, async (req, res) => {
   }
 });
 
-// Verify Razorpay Payment
+
 router.post('/verify-payment', authMiddleware, async (req, res) => {
   const { razorpay_order_id, razorpay_payment_id, razorpay_signature, plan } = req.body;
   const sign = razorpay_order_id + "|" + razorpay_payment_id;
@@ -128,7 +128,7 @@ router.post('/verify-payment', authMiddleware, async (req, res) => {
     .digest("hex");
 
   if (razorpay_signature === expectedSign) {
-    // Payment verified, update user subscription
+
     try {
       const user = await User.findById(req.user.id);
       user.subscription.isSubscribed = true;
@@ -151,7 +151,7 @@ router.post('/verify-payment', authMiddleware, async (req, res) => {
   }
 });
 
-// MFA Setup - Generate Secret & QR Code
+
 router.post('/mfa/setup', async (req, res) => {
   const { tempToken } = req.body;
   try {
@@ -168,7 +168,7 @@ router.post('/mfa/setup', async (req, res) => {
       issuer: 'TodoApp'
     });
 
-    // Save secret to user but don't enable it yet
+
     user.mfaSecret = secret.base32;
     await user.save();
 
@@ -180,7 +180,7 @@ router.post('/mfa/setup', async (req, res) => {
   }
 });
 
-// MFA Verify Setup - Enable MFA
+
 router.post('/mfa/verify-setup', async (req, res) => {
   const { tempToken, token } = req.body;
   try {
@@ -215,7 +215,7 @@ router.post('/mfa/verify-setup', async (req, res) => {
   }
 });
 
-// MFA Verify - During Login
+
 router.post('/mfa/verify', async (req, res) => {
   const { tempToken, token } = req.body;
   try {

@@ -24,14 +24,14 @@ const TodoSchema = new mongoose.Schema({
   }
 });
 
-// Encrypt task before saving
+
 TodoSchema.pre('save', async function() {
   if (this.isModified('task')) {
     this.task = encrypt(this.task);
   }
 });
 
-// Decrypt task after initializing
+
 TodoSchema.post('init', function(doc) {
   if (doc.task) {
     doc.task = decrypt(doc.task);

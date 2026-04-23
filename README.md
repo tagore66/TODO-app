@@ -38,7 +38,7 @@ A high-performance, full-stack TODO application built for security and efficienc
 | **Database** | MongoDB Atlas (Mongoose) |
 | **Auth/Security** | Passport.js, Speakeasy (TOTP), JWT, BcryptJS, ChaCha20-Poly1305 |
 | **Payments** | Razorpay SDK |
-| **DevOps** | Docker, Render |
+| **DevOps** | Docker, Kubernetes (Minikube), Nginx (Reverse Proxy), Render |
 
 ---
 
@@ -79,17 +79,27 @@ docker build -t todo-app .
 docker run -p 5000:5000 --env-file .env todo-app
 ```
 
+### Kubernetes (Microservices)
+The application can also be deployed as separate microservices (Frontend & Backend) on a Kubernetes cluster:
+1. **Apply Configuration**: `kubectl apply -f k8s/config.yaml`
+2. **Deploy Backend**: `kubectl apply -f k8s/backend.yaml`
+3. **Deploy Frontend**: `kubectl apply -f k8s/frontend.yaml`
+4. **Access App**: `minikube service todo-frontend-service`
+
 ---
 
 ## 📁 Project Structure
 ```
 TODO-app/
 │
-├── public/          # Glassmorphism UI & Logic
-├── server/          # Express API & Auth Routes
-├── models/          # Mongoose Schemas (User, Todo)
-├── Dockerfile       # Container Configuration
-├── .env             # Externalized Secrets
+├── public/          # Frontend static files (HTML, CSS, JS)
+├── server/          # Backend API, Routes & Database Logic
+├── k8s/             # Kubernetes Manifests (Deployments, Services, ConfigMap)
+├── Dockerfile.backend  # Multi-stage build for API service
+├── Dockerfile.frontend # Nginx build for frontend service
+├── Dockerfile       # Monolithic build for PaaS (Render)
+├── nginx.conf       # Nginx configuration for K8s reverse proxy
+├── .env             # Local development environment variables
 └── README.md
 ```
 

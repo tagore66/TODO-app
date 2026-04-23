@@ -3,7 +3,7 @@ const router = express.Router();
 const authMiddleware = require('../middleware/auth');
 const Todo = require('../models/Todo');
 
-// Get all todos for a user
+
 router.get('/', authMiddleware, async (req, res) => {
   try {
     const todos = await Todo.find({ userId: req.user.id }).sort({ createdAt: -1 });
@@ -15,13 +15,13 @@ router.get('/', authMiddleware, async (req, res) => {
 
 const User = require('../models/User');
 
-// Create a todo
+
 router.post('/', authMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
     const taskCount = await Todo.countDocuments({ userId: req.user.id });
 
-    // Enforce 4-task limit for free users
+
     const now = new Date();
     const isSubscribed = user.subscription && user.subscription.isSubscribed && new Date(user.subscription.expiryDate) > now;
 
@@ -45,7 +45,7 @@ router.post('/', authMiddleware, async (req, res) => {
   }
 });
 
-// Update a todo (toggle status or edit task)
+
 router.put('/:id', authMiddleware, async (req, res) => {
   try {
     let todo = await Todo.findById(req.params.id);
@@ -64,7 +64,7 @@ router.put('/:id', authMiddleware, async (req, res) => {
   }
 });
 
-// Delete a todo
+
 router.delete('/:id', authMiddleware, async (req, res) => {
   try {
     const todo = await Todo.findById(req.params.id);

@@ -161,7 +161,7 @@ button:hover {
   cursor: pointer;
 }
 
-/* Todo List Styles Redesign */
+
 .todo-container {
   max-width: 800px;
 }
@@ -429,7 +429,7 @@ button:hover {
   background: var(--primary);
 }
 
-/* Modal Styles */
+
 .modal {
   display: none;
   position: fixed;
@@ -511,7 +511,7 @@ button:hover {
   background: rgba(239, 68, 68, 0.1);
 }
 
-/* Premium Modal Styles */
+
 .premium-modal {
   max-width: 700px;
   width: 95%;
@@ -625,7 +625,7 @@ button:hover {
   display: none;
 }
 
-/* MFA Styles */
+
 .mfa-badge {
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;

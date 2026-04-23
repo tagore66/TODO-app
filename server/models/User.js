@@ -11,7 +11,7 @@ const UserSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: function() { return !this.googleId; } // Password required only for local auth
+    required: function() { return !this.googleId; } 
   },
   googleId: {
     type: String,
@@ -41,27 +41,27 @@ mfaEnabled: {
   }
 });
 
-// Hash password before saving
+
 UserSchema.pre('save', async function() {
   if (this.isModified('password') && this.password) {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
   }
 
-  // Encrypt mfaSecret before saving
+
   if (this.isModified('mfaSecret') && this.mfaSecret) {
     this.mfaSecret = encrypt(this.mfaSecret);
   }
 });
 
-// Decrypt mfaSecret after initializing
+
 UserSchema.post('init', function(doc) {
   if (doc.mfaSecret) {
     doc.mfaSecret = decrypt(doc.mfaSecret);
   }
 });
 
-// Method to verify password
+
 UserSchema.methods.comparePassword = async function(password) {
   return await bcrypt.compare(password, this.password);
 };

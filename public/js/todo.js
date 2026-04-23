@@ -1,13 +1,13 @@
 const BASE_URL = '';
 const token = localStorage.getItem('token');
 
-// Redirect if not logged in
+
 const urlParams = new URLSearchParams(window.location.search);
 const tokenFromUrl = urlParams.get('token');
 
 if (tokenFromUrl) {
   localStorage.setItem('token', tokenFromUrl);
-  // Clean URL
+
   window.history.replaceState({}, document.title, window.location.pathname);
   location.reload();
 }
@@ -19,7 +19,7 @@ if (!localStorage.getItem('token')) {
 const user = JSON.parse(localStorage.getItem('user') || '{}');
 document.getElementById('user-name').textContent = user.name || 'User';
 
-// Check subscription status
+
 async function checkSubscription() {
   try {
     const res = await fetch(`${BASE_URL}/auth/me`, {
@@ -27,12 +27,12 @@ async function checkSubscription() {
     });
     const userData = await res.json();
     
-    // Update name from server
+
     if (userData.name) {
       document.getElementById('user-name').textContent = userData.name;
     }
 
-    // MFA is mandatory now, no need to check status here
+
 
     if (userData.subscription && userData.subscription.isSubscribed) {
       const now = new Date();
@@ -49,10 +49,10 @@ async function checkSubscription() {
         const diffTime = Math.abs(expiry - now);
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
         document.getElementById('expiry-date').textContent = `Expires in ${diffDays} days`;
-        return true; // Is active PRO
+        return true; 
       }
     }
-    return false; // Is Free basic
+    return false; 
   } catch (err) {
     console.error('Error checking subscription:', err);
     return false;
@@ -66,7 +66,7 @@ if (premiumBtn) {
   premiumBtn.onclick = openSubModal;
 }
 
-// Modal Management
+
 const subModal = document.getElementById('subscription-modal');
 const closeSubBtn = document.getElementById('close-sub-modal');
 
@@ -79,7 +79,7 @@ function openSubModal() {
   subModal.classList.add('active');
 }
 
-// Logout
+
 const logoutBtn = document.getElementById('logout-btn');
 if (logoutBtn) {
   logoutBtn.addEventListener('click', () => {
@@ -89,7 +89,7 @@ if (logoutBtn) {
   });
 }
 
-// Fetch Todos
+
 async function fetchTodos() {
   try {
     const res = await fetch(`${BASE_URL}/todos`, {
@@ -98,7 +98,7 @@ async function fetchTodos() {
     if (res.status === 401) return logout();
     const todos = await res.json();
     
-    // Update limit counter
+
     const isPro = await checkSubscription();
     if (!isPro) {
       const remaining = Math.max(0, 4 - todos.length);
@@ -115,7 +115,7 @@ function renderTodos(todos) {
   const list = document.getElementById('todo-list');
   list.innerHTML = '';
   
-  // Sort todos: Active (not overdue) > Overdue > Completed
+
   const sortedTodos = [...todos].sort((a, b) => {
     const now = new Date().setHours(0,0,0,0);
     const aDeadline = a.deadline ? new Date(a.deadline).getTime() : Infinity;
@@ -180,7 +180,7 @@ function renderTodos(todos) {
   });
 }
 
-// Add Todo
+
 document.getElementById('add-todo-btn').addEventListener('click', addTodo);
 document.getElementById('todo-input').addEventListener('keypress', (e) => {
   if (e.key === 'Enter') addTodo();
@@ -212,7 +212,7 @@ async function addTodo() {
       deadlineInput.value = '';
       fetchTodos();
     } else if (res.status === 403) {
-      // Limit reached
+
       openSubModal();
     }
   } catch (err) {
@@ -220,7 +220,7 @@ async function addTodo() {
   }
 }
 
-// Toggle Todo
+
 window.toggleTodo = async (id, completed) => {
   try {
     const res = await fetch(`${BASE_URL}/todos/${id}`, {
@@ -239,7 +239,7 @@ window.toggleTodo = async (id, completed) => {
 
 let todoToDelete = null;
 
-// Delete Todo
+
 window.deleteTodo = (id) => {
   todoToDelete = id;
   document.getElementById('confirm-modal').classList.add('active');
@@ -278,7 +278,7 @@ function logout() {
   window.location.href = '/';
 }
 
-// Razorpay Payment Handling
+
 document.querySelectorAll('.select-plan-btn').forEach(btn => {
   btn.onclick = () => {
     const plan = btn.parentElement.getAttribute('data-plan');
@@ -308,7 +308,7 @@ async function processSubscription(plan) {
       description: `${plan.charAt(0).toUpperCase() + plan.slice(1)} Subscription`,
       order_id: data.order.id,
       handler: async function (response) {
-        // Verify payment
+
         const verifyRes = await fetch(`${BASE_URL}/auth/verify-payment`, {
           method: 'POST',
           headers: { 
